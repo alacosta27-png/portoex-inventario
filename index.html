@@ -10,9 +10,637 @@
   <meta name="apple-mobile-web-app-title" content="PORTOEX">
   <title>PORTOEX · Inventário</title>
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/icon-192.png">
-  <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="css/app.css">
+  <style>
+/* ===== PORTOEX INVENTÁRIO v3.0 ===== */
+:root {
+  --orange: #E8611A;
+  --orange-dark: #c0500f;
+  --orange-mid: #f4a97a;
+  --orange-light: #fdf0e8;
+  --orange-pale: #fef8f4;
+  --blue: #1A3A6E;
+  --blue2: #254d91;
+  --blue-light: #e8edf8;
+  --blue-mid: #b5c4e0;
+  --green: #1a7a3e;
+  --green-bg: #e8f5ee;
+  --red: #c0392b;
+  --red-bg: #fdecea;
+  --amber: #a05c00;
+  --amber-bg: #fff8e1;
+  --gray: #f7f7f7;
+  --border: #e8e8e8;
+  --text: #111;
+  --text2: #555;
+  --text3: #aaa;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: #f0f2f5; color: var(--text); }
+
+/* ===== SCREENS ===== */
+.screen { display: none; height: 100vh; overflow: hidden; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ===== LOGIN ===== */
+.login-bg {
+  position: fixed; inset: 0; z-index: 0;
+  background: var(--blue);
+  overflow: hidden;
+}
+.login-bg::before {
+  content: '';
+  position: absolute; top: -40%; right: -30%;
+  width: 500px; height: 500px;
+  background: var(--orange);
+  border-radius: 50%;
+  opacity: .12;
+}
+.login-bg::after {
+  content: '';
+  position: absolute; bottom: -20%; left: -20%;
+  width: 350px; height: 350px;
+  background: var(--orange);
+  border-radius: 50%;
+  opacity: .08;
+}
+.login-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  min-height: 100vh; padding: 32px 16px 24px;
+  overflow-y: auto;
+}
+.brand {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 28px;
+}
+.brand-icon {
+  width: 52px; height: 52px;
+  background: var(--orange);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(232,97,26,.4);
+}
+.brand-name {
+  font-size: 26px; font-weight: 800;
+  color: white; letter-spacing: 3px;
+  line-height: 1;
+}
+.brand-tagline {
+  font-size: 9px; letter-spacing: 2px;
+  color: rgba(255,255,255,.5);
+  margin-top: 3px;
+}
+.login-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 100%; max-width: 440px;
+  box-shadow: var(--shadow-lg);
+}
+.login-title {
+  font-size: 18px; font-weight: 700;
+  color: var(--blue); text-align: center;
+  margin-bottom: 4px;
+}
+.login-sub {
+  font-size: 13px; color: var(--text3);
+  text-align: center; margin-bottom: 18px;
+}
+.online-banner {
+  background: var(--blue-light);
+  border: 1px solid var(--blue-mid);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 12px; color: var(--blue);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.op-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.op-btn {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 8px;
+  cursor: pointer; text-align: center;
+  transition: all .15s;
+  font-family: inherit;
+}
+.op-btn:hover { border-color: var(--orange); background: var(--orange-light); }
+.op-btn:active { transform: scale(.97); }
+.op-btn.sel { background: var(--orange); border-color: var(--orange-dark); }
+.op-btn .ini {
+  font-size: 22px; font-weight: 800;
+  display: block; margin-bottom: 5px;
+  color: var(--blue);
+}
+.op-btn.sel .ini { color: white; }
+.op-btn .nm { font-size: 12px; font-weight: 600; color: var(--text); }
+.op-btn.sel .nm { color: white; }
+.login-footer {
+  text-align: center; margin-top: 14px;
+  font-size: 11px; color: var(--text3);
+}
+
+/* ===== HEADER APP ===== */
+.hdr {
+  background: var(--blue);
+  padding: 0 16px;
+  height: 54px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.hdr-brand { display: flex; align-items: center; gap: 10px; }
+.hdr-icon {
+  width: 30px; height: 30px;
+  background: var(--orange);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.hdr-name { font-size: 14px; font-weight: 800; color: white; letter-spacing: 1.5px; line-height: 1; }
+.hdr-op { font-size: 10px; color: rgba(255,255,255,.55); letter-spacing: .5px; margin-top: 2px; }
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.sync-indicator {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.1);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 11px; color: rgba(255,255,255,.8);
+}
+.sync-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%; background: #4ade80;
+  animation: pls 2s ease infinite;
+}
+.sync-dot.offline { background: #f87171; animation: none; }
+.sync-dot.syncing { background: var(--orange); }
+@keyframes pls { 0%,100%{opacity:1}50%{opacity:.3} }
+.hdr-badge {
+  background: var(--orange);
+  color: white; font-weight: 700;
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 12px; min-width: 32px; text-align: center;
+}
+
+/* ===== LIVE FEED ===== */
+.live-feed {
+  background: var(--blue); border-bottom: 1px solid rgba(255,255,255,.1);
+  padding: 6px 16px; flex-shrink: 0;
+}
+.feed-inner {
+  display: flex; gap: 16px; overflow-x: auto;
+  scrollbar-width: none;
+  font-size: 11px; color: rgba(255,255,255,.7);
+  align-items: center;
+}
+.feed-inner::-webkit-scrollbar { display: none; }
+.feed-entry { white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+.feed-op { font-weight: 700; }
+.feed-nf { color: white; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; background: white;
+  border-bottom: 2px solid var(--border);
+  flex-shrink: 0; overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1; min-width: 70px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 10px 4px 8px;
+  border: none; background: transparent;
+  font-family: inherit; font-size: 10px; font-weight: 600;
+  color: var(--text3); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all .15s;
+  position: relative;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.tab:hover { color: var(--orange); }
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+.tab-badge {
+  position: absolute; top: 6px; right: 8px;
+  background: var(--orange); color: white;
+  font-size: 9px; font-weight: 700;
+  border-radius: 10px; padding: 1px 5px;
+  min-width: 16px; text-align: center;
+}
+
+/* ===== TAB CONTENT ===== */
+.tab-content { flex: 1; overflow: hidden; position: relative; }
+.tab-pane {
+  display: none; height: 100%;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
+.tab-pane.active { display: block; }
+
+/* ===== INFOBAR ===== */
+.infobar {
+  display: flex; align-items: center;
+  background: var(--blue); padding: 10px 16px;
+  gap: 12px;
+}
+.infobar-item { display: flex; flex-direction: column; align-items: center; }
+.infobar-val { font-size: 18px; font-weight: 800; color: white; line-height: 1; }
+.infobar-key { font-size: 10px; color: rgba(255,255,255,.5); margin-top: 2px; text-transform: uppercase; letter-spacing: .5px; }
+.infobar-sep { width: 1px; height: 28px; background: rgba(255,255,255,.15); }
+.online-users .infobar-val { font-size: 13px; }
+
+/* ===== FORM ===== */
+.form-body { padding: 14px 16px 24px; }
+.field { margin-bottom: 14px; }
+.lbl {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+  color: var(--text2); text-transform: uppercase;
+  letter-spacing: .7px; margin-bottom: 6px;
+}
+.req { color: var(--orange); font-size: 14px; font-weight: 400; }
+.field-row { display: flex; gap: 8px; align-items: stretch; }
+.field-wrap { flex: 1; position: relative; }
+
+.inp {
+  width: 100%; padding: 12px 14px;
+  font-size: 15px; font-family: inherit;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: white; color: var(--text);
+  outline: none; transition: all .15s;
+  -webkit-appearance: none;
+}
+.inp:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,97,26,.1); }
+.inp.inp-big { font-size: 17px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.inp.inp-ta { resize: none; min-height: 80px; }
+.inp.filled-green { background: var(--green-bg); border-color: #6ee7b7; }
+.inp.filled-amber { background: var(--amber-bg); border-color: #fcd34d; }
+
+.scan-btn {
+  background: var(--blue); color: white;
+  border: none; border-radius: var(--radius);
+  padding: 0 16px; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+  min-height: 48px; white-space: nowrap;
+  transition: background .15s;
+}
+.scan-btn:hover { background: var(--blue2); }
+.scan-btn:active { transform: scale(.97); }
+
+.field-hint { margin-top: 5px; }
+.hint-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  border-radius: 6px; padding: 3px 9px;
+  font-size: 11px; font-weight: 700;
+}
+.hint-tag.green { background: var(--green-bg); color: #065f46; border: 1px solid #a7f3d0; }
+.hint-tag.amber { background: var(--amber-bg); color: #92400e; border: 1px solid #fcd34d; }
+.hint-tag.blue  { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
+.hint-tag.orange{ background: var(--orange-light); color: var(--orange-dark); border: 1px solid var(--orange-mid); }
+
+/* SUGESTÕES */
+.sugg {
+  display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 100;
+  background: white;
+  border: 1.5px solid var(--orange-mid);
+  border-radius: var(--radius);
+  margin-top: 4px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.sugg.open { display: block; }
+.sugg-item {
+  padding: 11px 14px; font-size: 14px;
+  cursor: pointer; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  transition: background .1s;
+}
+.sugg-item:last-child { border-bottom: none; }
+.sugg-item:hover, .sugg-item:active { background: var(--orange-light); }
+.sugg-ic {
+  width: 20px; height: 20px; border-radius: 5px;
+  background: var(--orange-light);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* FOTO */
+.photo-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  min-height: 86px;
+  cursor: pointer;
+  background: var(--gray);
+  transition: all .15s;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.photo-zone:hover { border-color: var(--orange); background: var(--orange-pale); }
+.photo-zone.ok { border-style: solid; border-color: var(--green); background: var(--green-bg); }
+.photo-placeholder {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 16px;
+  color: var(--text3); font-size: 13px; text-align: center;
+}
+.photo-thumb { width: 100%; max-height: 140px; object-fit: cover; }
+
+/* FORM ACTIONS */
+.form-actions { margin-top: 6px; display: flex; flex-direction: column; gap: 10px; }
+.btn-save {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-auto { font-size: 11px; opacity: .7; font-weight: 400; }
+
+/* ===== BUTTONS ===== */
+.btn-main {
+  width: 100%; background: var(--orange);
+  color: white; border: none;
+  border-radius: var(--radius); padding: 14px;
+  font-size: 14px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  transition: all .15s; letter-spacing: .3px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-main:hover { background: var(--orange-dark); }
+.btn-main:active { transform: scale(.99); }
+.btn-main:disabled { opacity: .35; cursor: not-allowed; }
+.btn-ghost {
+  width: 100%; background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 12px;
+  font-size: 14px; font-weight: 600;
+  font-family: inherit; cursor: pointer; color: var(--text2);
+  transition: background .15s;
+}
+.btn-ghost:hover { background: var(--gray); }
+.btn-danger {
+  width: 100%; background: var(--red-bg);
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius); padding: 12px;
+  font-size: 14px; font-weight: 700;
+  font-family: inherit; cursor: pointer; color: var(--red);
+  transition: opacity .15s;
+}
+.btn-danger:hover { opacity: .85; }
+.btn-sm {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 14px;
+  font-size: 12px; font-weight: 700;
+  font-family: inherit; cursor: pointer; color: var(--text2);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.btn-sm:hover { background: var(--gray); }
+
+/* ===== LISTA ===== */
+.list-toolbar { padding: 12px 16px 0; }
+.search-wrap { position: relative; margin-bottom: 10px; }
+.search-inp { padding-left: 38px !important; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 12px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  color: var(--text2); white-space: nowrap;
+  transition: all .15s;
+}
+.chip:hover { border-color: var(--orange); }
+.chip.on { background: var(--orange); color: white; border-color: var(--orange-dark); }
+.list-export {
+  padding: 0 16px 10px;
+  display: flex; gap: 8px;
+}
+.lista-items { padding: 0 16px 24px; }
+.item-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+  margin-bottom: 10px;
+  transition: border-color .15s;
+}
+.item-card:hover { border-color: var(--orange-mid); }
+.ic-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.ic-nf { font-size: 16px; font-weight: 800; color: var(--blue); letter-spacing: .5px; }
+.ic-right { text-align: right; flex-shrink: 0; }
+.ic-time { font-size: 11px; color: var(--text3); }
+.ic-op { font-size: 10px; font-weight: 700; margin-top: 2px; }
+.ic-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; }
+.badge {
+  display: inline-flex; align-items: center;
+  border-radius: 5px; padding: 2px 7px;
+  font-size: 10px; font-weight: 700;
+}
+.badge.blue { background: var(--blue-light); color: var(--blue); }
+.badge.amber { background: var(--amber-bg); color: var(--amber); }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.orange { background: var(--orange-light); color: var(--orange-dark); }
+.ic-meta { font-size: 12px; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+.ic-obs { font-size: 12px; color: var(--text3); font-style: italic; margin-top: 4px; }
+.ic-del {
+  background: var(--red-bg); border: none;
+  border-radius: 6px; color: var(--red);
+  padding: 4px 9px; font-size: 11px; font-weight: 700;
+  cursor: pointer; margin-top: 5px; font-family: inherit;
+}
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  color: var(--text3); font-size: 14px;
+}
+.empty-icon { font-size: 40px; margin-bottom: 12px; opacity: .4; }
+
+/* ===== DASHBOARD ===== */
+#pane-dash { padding: 14px 16px 24px; }
+.dash-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+.d-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+}
+.d-card .dv { font-size: 30px; font-weight: 800; color: var(--blue); line-height: 1; }
+.d-card .dk { font-size: 10px; color: var(--text3); margin-top: 4px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+.d-card.highlight .dv { color: var(--orange); }
+.sec-title {
+  font-size: 11px; font-weight: 800;
+  color: var(--text2); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.prog-bar { background: var(--gray); border-radius: 6px; height: 10px; overflow: hidden; margin-bottom: 16px; }
+.prog-fill { height: 100%; background: var(--orange); border-radius: 6px; transition: width .6s ease; }
+.ops-card {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+}
+.op-row2 {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.op-row2:last-child { border-bottom: none; }
+.op-av2 {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+}
+.op-bar-bg2 { flex: 1; height: 6px; background: var(--gray); border-radius: 3px; overflow: hidden; }
+.op-bar-fill2 { height: 100%; border-radius: 3px; transition: width .6s; }
+.op-cnt { font-size: 15px; font-weight: 800; color: var(--text); min-width: 28px; text-align: right; }
+
+/* ===== CONFIG ===== */
+#pane-config { padding: 14px 16px 40px; }
+.config-op-card {
+  background: var(--blue); border-radius: var(--radius);
+  padding: 16px; display: flex; align-items: center;
+  gap: 14px; margin-bottom: 16px;
+}
+.cfg-av {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: white;
+  flex-shrink: 0;
+}
+.cfg-op-name { font-size: 17px; font-weight: 800; color: white; }
+.cfg-op-role { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+.cfg-stats {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.cfg-stat {
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px; text-align: center;
+}
+.cfg-stat .sv { font-size: 28px; font-weight: 800; color: var(--blue); }
+.cfg-stat .sk { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; font-weight: 600; }
+.cfg-stat.orange .sv { color: var(--orange); }
+.cfg-section-title {
+  font-size: 11px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--text2);
+  margin-bottom: 10px; margin-top: 4px;
+}
+.cfg-info-box {
+  background: var(--orange-light); border: 1px solid var(--orange-mid);
+  border-radius: var(--radius); padding: 14px; margin-top: 18px;
+}
+.cfg-info-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--orange-dark); margin-bottom: 6px; }
+.cfg-info-box p { font-size: 12px; color: var(--text2); line-height: 1.65; }
+.cfg-info-box code { background: rgba(0,0,0,.07); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+.cfg-version { text-align: center; margin-top: 20px; font-size: 11px; color: var(--text3); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(10,20,40,.65);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+@media (min-width: 500px) {
+  .modal-overlay { align-items: center; }
+}
+.modal {
+  background: white;
+  border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 480px;
+  padding: 20px 20px 32px;
+  max-height: 92vh; overflow-y: auto;
+  animation: slideUp .25s ease;
+}
+@media (min-width: 500px) {
+  .modal { border-radius: 20px; padding: 24px; }
+}
+@keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-sm { max-height: 60vh; }
+.modal-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-hdr h3 { font-size: 17px; font-weight: 800; color: var(--blue); }
+.modal-close {
+  background: var(--gray); border: none; border-radius: 50%;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text2);
+}
+.modal-title-danger { font-size: 17px; font-weight: 800; color: var(--red); margin-bottom: 10px; }
+.modal-body-text { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+.modal-footer { display: flex; gap: 10px; margin-top: 16px; }
+.modal-footer button { flex: 1; }
+
+/* SCANNER */
+.scanner-video-wrap {
+  position: relative; border-radius: var(--radius);
+  overflow: hidden; background: #000;
+  margin-bottom: 14px;
+}
+#scanner-video { width: 100%; display: block; max-height: 260px; object-fit: cover; }
+.scanner-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 12px;
+}
+.scanner-frame-box {
+  position: relative; width: 180px; height: 140px;
+}
+.sc-corner {
+  position: absolute; width: 20px; height: 20px;
+  border-color: var(--orange); border-style: solid;
+}
+.sc-tl { top:0;left:0; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+.sc-tr { top:0;right:0; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+.sc-bl { bottom:0;left:0; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+.sc-br { bottom:0;right:0; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+.sc-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: var(--orange); box-shadow: 0 0 8px var(--orange);
+  animation: scn 1.5s linear infinite;
+}
+@keyframes scn { 0%{top:4%}100%{top:96%} }
+.scanner-tip { font-size: 12px; color: rgba(255,255,255,.7); text-align: center; }
+.scanner-manual { margin-bottom: 2px; }
+.scanner-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 8px 0 12px; font-size: 12px; color: var(--text3);
+}
+.scanner-divider::before, .scanner-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  z-index: 2000; pointer-events: none; opacity: 0;
+  transition: opacity .3s; white-space: nowrap;
+  padding: 10px 20px; border-radius: 30px;
+  font-size: 13px; font-weight: 700; color: white;
+}
+.toast.show { opacity: 1; }
+.toast.ok { background: var(--green); }
+.toast.warn { background: var(--orange); }
+.toast.info { background: var(--blue); }
+.toast.err { background: var(--red); }
+
+/* ===== PULSE ANIM ===== */
+@keyframes fadeInUp {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.item-card { animation: fadeInUp .2s ease; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  </style>
 </head>
 <body>
 
@@ -45,7 +673,6 @@
 
   <!-- ===================== TELA PRINCIPAL ===================== -->
   <div id="s-app" class="screen">
-    <!-- HEADER -->
     <header class="hdr" id="main-hdr">
       <div class="hdr-brand">
         <div class="hdr-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
@@ -63,12 +690,10 @@
       </div>
     </header>
 
-    <!-- LIVE FEED -->
     <div class="live-feed" id="live-feed" style="display:none">
       <div class="feed-inner" id="feed-inner"></div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs" id="tabs">
       <button class="tab active" data-tab="form" onclick="App.navTab('form',this)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -89,10 +714,7 @@
       </button>
     </div>
 
-    <!-- CONTEÚDO DAS TABS -->
     <div class="tab-content">
-
-      <!-- FORM -->
       <div class="tab-pane active" id="pane-form">
         <div class="infobar">
           <div class="infobar-item">
@@ -110,9 +732,7 @@
             <span class="infobar-key">outros online</span>
           </div>
         </div>
-
         <div class="form-body">
-          <!-- NF/DI -->
           <div class="field">
             <label class="lbl">NF / DI <span class="req">*</span></label>
             <div class="field-row">
@@ -132,8 +752,6 @@
             </div>
             <div class="field-hint" id="h-nf"></div>
           </div>
-
-          <!-- CLIENTE -->
           <div class="field">
             <label class="lbl">Cliente <span class="req">*</span></label>
             <div class="field-wrap">
@@ -142,8 +760,6 @@
               <div class="sugg" id="sg-cli"></div>
             </div>
           </div>
-
-          <!-- VOL/QTD -->
           <div class="field">
             <label class="lbl">Vol / Qtd <span class="req">*</span></label>
             <div class="field-wrap">
@@ -152,8 +768,6 @@
               <div class="sugg" id="sg-vol"></div>
             </div>
           </div>
-
-          <!-- ENDEREÇO -->
           <div class="field">
             <label class="lbl">Endereço / Destino</label>
             <div class="field-wrap">
@@ -162,14 +776,10 @@
               <div class="sugg" id="sg-end"></div>
             </div>
           </div>
-
-          <!-- OBS -->
           <div class="field">
             <label class="lbl">Observação</label>
             <textarea id="f-obs" class="inp inp-ta" placeholder="Avarias, urgência, temperatura, DI pendente..."></textarea>
           </div>
-
-          <!-- FOTO -->
           <div class="field">
             <label class="lbl">Foto da mercadoria</label>
             <div class="photo-zone" id="photo-zone" onclick="document.getElementById('f-foto').click()">
@@ -184,7 +794,6 @@
             <div class="field-hint" id="h-foto"></div>
             <input type="file" id="f-foto" accept="image/*" capture="environment" style="display:none" onchange="App.onFoto(this)">
           </div>
-
           <div class="form-actions">
             <button class="btn-main btn-save" id="btn-salvar" onclick="App.salvar()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -196,7 +805,6 @@
         </div>
       </div>
 
-      <!-- LISTA -->
       <div class="tab-pane" id="pane-lista">
         <div class="list-toolbar">
           <div class="search-wrap">
@@ -222,35 +830,33 @@
         <div id="lista-items" class="lista-items"></div>
       </div>
 
-      <!-- DASHBOARD -->
       <div class="tab-pane" id="pane-dash">
-        <div id="dash-content"></div>
+        <div id="dash-content" style="padding:14px 16px 24px;"></div>
       </div>
 
-      <!-- CONFIG -->
       <div class="tab-pane" id="pane-config">
-        <div class="config-op-card" id="cfg-op-card">
-          <div class="cfg-av" id="cfg-av"></div>
-          <div>
-            <div class="cfg-op-name" id="cfg-op-name"></div>
-            <div class="cfg-op-role">Conferente ativo</div>
+        <div style="padding:14px 16px 40px;">
+          <div class="config-op-card" id="cfg-op-card">
+            <div class="cfg-av" id="cfg-av"></div>
+            <div>
+              <div class="cfg-op-name" id="cfg-op-name"></div>
+              <div class="cfg-op-role">Conferente ativo</div>
+            </div>
           </div>
+          <div class="cfg-stats" id="cfg-stats"></div>
+          <div class="cfg-section-title">Exportar dados</div>
+          <button class="btn-main" style="margin-bottom:10px;" onclick="App.exportCSV()">Exportar CSV (Excel)</button>
+          <button class="btn-ghost" style="margin-bottom:18px;" onclick="App.exportTXT()">Exportar TXT (relatório)</button>
+          <div class="cfg-section-title">Sessão</div>
+          <button class="btn-ghost" style="margin-bottom:10px;" onclick="App.trocarOp()">Trocar operador</button>
+          <button class="btn-danger" onclick="App.confirmarLimpar()">Apagar toda a base</button>
+          <div class="cfg-info-box" style="margin-top:18px;">
+            <div class="cfg-info-title">Firebase conectado</div>
+            <p>Dados sincronizados em tempo real via Firebase Realtime Database.<br>Projeto: <code>portoex-inventario</code></p>
+          </div>
+          <div class="cfg-version">PORTOEX Inventário v3.0 · Itajaí – SC · 2025</div>
         </div>
-        <div class="cfg-stats" id="cfg-stats"></div>
-        <div class="cfg-section-title">Exportar dados</div>
-        <button class="btn-main" style="margin-bottom:10px;" onclick="App.exportCSV()">Exportar CSV (Excel)</button>
-        <button class="btn-ghost" style="margin-bottom:18px;" onclick="App.exportTXT()">Exportar TXT (relatório)</button>
-        <div class="cfg-section-title">Sessão</div>
-        <button class="btn-ghost" style="margin-bottom:10px;" onclick="App.trocarOp()">Trocar operador</button>
-        <button class="btn-danger" onclick="App.confirmarLimpar()">Apagar toda a base</button>
-        <div class="cfg-info-box">
-          <div class="cfg-info-title">Sincronização em tempo real</div>
-          <p>Dados salvos no Firebase Realtime Database. Cada registro é enviado automaticamente e recebido por todos os dispositivos conectados ao mesmo tempo.</p>
-          <p style="margin-top:8px;">Para configurar seu banco de dados, edite o arquivo <code>js/firebase-config.js</code> com suas credenciais do Firebase.</p>
-        </div>
-        <div class="cfg-version">PORTOEX Inventário v3.0 · Itajaí – SC · 2025</div>
       </div>
-
     </div>
   </div>
 
@@ -298,20 +904,934 @@
     </div>
   </div>
 
-  <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
-  <!-- SCRIPTS -->
-  <!-- ZXing para leitura de QR/barcode via câmera -->
-  <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
-  <script src="js/firebase-config.js"></script>
-  <script src="js/db.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Firebase SDK v8 (compat) via CDN -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <!-- ZXing barcode reader -->
+  <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+
+  <script>
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyCqc7fvri9fm3a2XJ-5M60GIFEYsUdbGoM",
+  authDomain:        "portoex-inventario.firebaseapp.com",
+  databaseURL:       "https://portoex-inventario-default-rtdb.firebaseio.com",
+  projectId:         "portoex-inventario",
+  storageBucket:     "portoex-inventario.firebasestorage.app",
+  messagingSenderId: "863156663581",
+  appId:             "1:863156663581:web:fc1196b4934bc4c0689df4",
+  measurementId:     "G-R32BL40Q6P"
+};
+  </script>
+
+  <script>
+/**
+ * ============================================================
+ *  PORTOEX — CAMADA DE BANCO DE DADOS
+ *  Firebase Realtime Database + fallback localStorage
+ * ============================================================
+ */
+
+const DB = (() => {
+
+  const LS_KEY     = 'ptx_items_v3';
+  const LS_LK_KEY  = 'ptx_lookup_v3';
+  const LS_SESS    = 'ptx_sessions_v3';
+
+  let firebaseApp  = null;
+  let firebaseDb   = null;
+  let isFirebaseOk = false;
+  let onNewItemCb  = null;
+  let onOnlineCb   = null;
+  let myOpName     = null;
+
+  /* ── INICIALIZAÇÃO ─────────────────────────────────────── */
+  function init(operatorName, onNewItem, onOnlineChange) {
+    myOpName   = operatorName;
+    onNewItemCb     = onNewItem;
+    onOnlineCb      = onOnlineChange;
+
+    try {
+      if (typeof firebase === 'undefined') throw new Error('SDK não carregado');
+      if (!FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey.includes('COLE')) {
+        throw new Error('Firebase não configurado');
+      }
+
+      // Inicializa apenas uma vez
+      if (!firebase.apps.length) {
+        firebase.initializeApp(FIREBASE_CONFIG);
+      }
+      firebaseApp = firebase.app();
+      firebaseDb  = firebase.database();
+      isFirebaseOk = true;
+
+      _setupRealtimeListeners();
+      _startPresence();
+      console.log('[PORTOEX DB] Firebase conectado ✓');
+    } catch (e) {
+      console.warn('[PORTOEX DB] Firebase indisponível, usando localStorage:', e.message);
+      isFirebaseOk = false;
+    }
+  }
+
+  /* ── SALVAR ITEM ───────────────────────────────────────── */
+  async function saveItem(item) {
+    // Sempre salva localmente primeiro
+    const local = _getLocal();
+    local.unshift(item);
+    _saveLocal(local);
+    _updateLookup(item);
+
+    // Envia para Firebase se disponível
+    if (isFirebaseOk) {
+      try {
+        await firebaseDb.ref('inventario/' + item.id).set(item);
+        console.log('[PORTOEX DB] Item enviado ao Firebase:', item.nf);
+        return { success: true, source: 'firebase' };
+      } catch (e) {
+        console.error('[PORTOEX DB] Erro ao salvar no Firebase:', e);
+        _queueOffline(item);
+        return { success: true, source: 'local', queued: true };
+      }
+    }
+    return { success: true, source: 'local' };
+  }
+
+  /* ── DELETAR ITEM ──────────────────────────────────────── */
+  async function deleteItem(id) {
+    const local = _getLocal().filter(i => i.id !== id);
+    _saveLocal(local);
+
+    if (isFirebaseOk) {
+      try {
+        await firebaseDb.ref('inventario/' + id).remove();
+      } catch (e) {
+        console.error('[PORTOEX DB] Erro ao deletar no Firebase:', e);
+      }
+    }
+  }
+
+  /* ── LER ITENS ─────────────────────────────────────────── */
+  function getItems() {
+    return _getLocal();
+  }
+
+  /* ── LIMPAR TUDO ───────────────────────────────────────── */
+  async function clearAll() {
+    _saveLocal([]);
+    try { localStorage.removeItem(LS_LK_KEY); } catch(e) {}
+
+    if (isFirebaseOk) {
+      try {
+        await firebaseDb.ref('inventario').remove();
+      } catch (e) {
+        console.error('[PORTOEX DB] Erro ao limpar Firebase:', e);
+      }
+    }
+  }
+
+  /* ── LISTENERS REALTIME ─────────────────────────────────── */
+  function _setupRealtimeListeners() {
+    if (!isFirebaseOk) return;
+
+    // Escuta novos itens
+    firebaseDb.ref('inventario').on('child_added', snapshot => {
+      const item = snapshot.val();
+      if (!item) return;
+
+      // Ignora itens do próprio operador e itens já existentes localmente
+      const local = _getLocal();
+      const alreadyExists = local.some(i => i.id === item.id);
+
+      if (!alreadyExists) {
+        local.unshift(item);
+        _saveLocal(local);
+        if (onNewItemCb && item.operador !== myOpName) {
+          onNewItemCb(item);
+        }
+      }
+    });
+
+    // Escuta deleções remotas
+    firebaseDb.ref('inventario').on('child_removed', snapshot => {
+      const id = snapshot.key;
+      const local = _getLocal().filter(i => i.id !== id);
+      _saveLocal(local);
+    });
+
+    // Tenta enviar fila offline
+    firebaseDb.ref('.info/connected').on('value', snap => {
+      if (snap.val() === true) {
+        _flushOfflineQueue();
+      }
+    });
+  }
+
+  /* ── PRESENÇA (quem está online) ───────────────────────── */
+  function _startPresence() {
+    if (!isFirebaseOk || !myOpName) return;
+
+    const sessRef = firebaseDb.ref('sessions/' + myOpName);
+    const connRef = firebaseDb.ref('.info/connected');
+
+    connRef.on('value', snap => {
+      if (!snap.val()) return;
+
+      sessRef.onDisconnect().remove();
+      sessRef.set({
+        ts: firebase.database.ServerValue.TIMESTAMP,
+        color: _opColor(myOpName)
+      });
+
+      // Atualiza heartbeat a cada 30s
+      setInterval(() => {
+        sessRef.set({
+          ts: firebase.database.ServerValue.TIMESTAMP,
+          color: _opColor(myOpName)
+        }).catch(() => {});
+      }, 30000);
+    });
+
+    // Escuta mudanças de sessões (outros online)
+    firebaseDb.ref('sessions').on('value', snap => {
+      const all = snap.val() || {};
+      const online = Object.entries(all)
+        .filter(([name]) => name !== myOpName)
+        .map(([name, v]) => ({ name, color: v.color || '#E8611A' }));
+      if (onOnlineCb) onOnlineCb(online);
+    });
+  }
+
+  /* ── FILA OFFLINE ──────────────────────────────────────── */
+  function _queueOffline(item) {
+    try {
+      const q = JSON.parse(localStorage.getItem('ptx_offline_q') || '[]');
+      q.push(item);
+      localStorage.setItem('ptx_offline_q', JSON.stringify(q));
+    } catch(e) {}
+  }
+
+  async function _flushOfflineQueue() {
+    try {
+      const q = JSON.parse(localStorage.getItem('ptx_offline_q') || '[]');
+      if (!q.length) return;
+      for (const item of q) {
+        await firebaseDb.ref('inventario/' + item.id).set(item);
+      }
+      localStorage.removeItem('ptx_offline_q');
+      console.log('[PORTOEX DB] Fila offline enviada:', q.length, 'itens');
+    } catch(e) {
+      console.warn('[PORTOEX DB] Erro ao enviar fila offline:', e);
+    }
+  }
+
+  /* ── LOOKUP (autocompletar) ───────────────────────────── */
+  function getLookup() {
+    try { return JSON.parse(localStorage.getItem(LS_LK_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function _updateLookup(item) {
+    const lk = getLookup();
+    _addLK(lk, 'nf',  item.nf);
+    _addLK(lk, 'cli', item.cliente);
+    _addLK(lk, 'vol', item.vol);
+    if (item.end) _addLK(lk, 'end', item.end);
+    if (item.obs) _addLK(lk, 'obs', item.obs);
+    try { localStorage.setItem(LS_LK_KEY, JSON.stringify(lk)); } catch(e) {}
+  }
+  function _addLK(lk, field, val) {
+    if (!val) return;
+    const key = field + ':' + val.toUpperCase().slice(0, 4);
+    if (!lk[key]) lk[key] = [];
+    if (!lk[key].includes(val)) lk[key].unshift(val);
+    if (lk[key].length > 8) lk[key] = lk[key].slice(0, 8);
+  }
+  function getSuggestions(field, val) {
+    if (!val || val.length < 1) return [];
+    const lk = getLookup();
+    const key = field + ':' + val.toUpperCase().slice(0, 4);
+    return (lk[key] || []).filter(v => v.toLowerCase().includes(val.toLowerCase())).slice(0, 6);
+  }
+
+  /* ── LOCAL STORAGE ─────────────────────────────────────── */
+  function _getLocal() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function _saveLocal(arr) {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+
+  /* ── UTILIDADES ─────────────────────────────────────────── */
+  const OP_COLORS = ['#E8611A','#1A3A6E','#1a7a3e','#7c3aed','#0891b2','#b45309','#c0392b'];
+  const OPS = ['ABNER','LUIZ','GUILHERME','PANTCHA','EMANUEL','J. GABRIEL','J. AGUINALDO'];
+  function _opColor(name) {
+    const idx = OPS.indexOf(name);
+    return idx >= 0 ? OP_COLORS[idx] : OP_COLORS[0];
+  }
+  function opColor(name) { return _opColor(name); }
+
+  function isFirebaseConnected() { return isFirebaseOk; }
+
+  return {
+    init,
+    saveItem,
+    deleteItem,
+    getItems,
+    clearAll,
+    getSuggestions,
+    opColor,
+    isFirebaseConnected
+  };
+
+})();
+
+  </script>
+
+  <script>
+/**
+ * ============================================================
+ *  PORTOEX INVENTÁRIO — LÓGICA PRINCIPAL DO APP
+ * ============================================================
+ */
+
+const App = (() => {
+
+  const OPERADORES = ['ABNER','LUIZ','GUILHERME','PANTCHA','EMANUEL','J. GABRIEL','J. AGUINALDO'];
+  const OP_COLORS  = ['#E8611A','#1A3A6E','#1a7a3e','#7c3aed','#0891b2','#b45309','#c0392b'];
+
+  let op         = null;
+  let opColor    = '#E8611A';
+  let fotoAtual  = null;
+  let scanField  = null;
+  let filtAtivo  = 'hoje';
+  let onlineUsers = [];
+  let horaInterval = null;
+  let zxingReader  = null;
+  let cameraStream = null;
+
+  /* ── BOOTSTRAP ─────────────────────────────────────────── */
+  function boot() {
+    _renderOpGrid();
+    _updateOnlineBanner();
+    _setInterval();
+  }
+
+  function _setInterval() {
+    setInterval(() => {
+      _updateHora();
+    }, 30000);
+  }
+
+  /* ── TELA DE LOGIN ─────────────────────────────────────── */
+  function _renderOpGrid() {
+    const grid = document.getElementById('op-grid');
+    OPERADORES.forEach((name, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'op-btn';
+      btn.innerHTML = `<span class="ini">${_ini(name)}</span><span class="nm">${name}</span>`;
+      btn.onclick = () => {
+        document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('sel'));
+        btn.classList.add('sel');
+        op = name;
+        opColor = OP_COLORS[i];
+        document.getElementById('btn-iniciar').disabled = false;
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function iniciar() {
+    if (!op) return;
+    DB.init(op, _onNewItem, _onOnlineChange);
+    document.getElementById('hdr-op-name').textContent = op;
+    _updateHoje();
+    _updateHora();
+    _setScreen('s-app');
+    _syncIndicator(DB.isFirebaseConnected() ? 'online' : 'offline');
+    _showToast('Bem-vindo, ' + op.split(' ')[0] + '!', 'ok');
+  }
+
+  /* ── SINCRONIZAÇÃO MULTI-USUÁRIO ───────────────────────── */
+  function _onNewItem(item) {
+    _updateHoje();
+    _addFeedEntry(item);
+    _showToast(`${item.operador.split(' ')[0]} registrou ${item.nf}`, 'info', 3000);
+    const badge = document.getElementById('tab-badge-lista');
+    if (badge) {
+      badge.style.background = '#E8611A';
+      setTimeout(() => { badge.style.background = ''; }, 2000);
+    }
+  }
+
+  function _onOnlineChange(users) {
+    onlineUsers = users;
+    _renderOnlineBar(users);
+    _renderOnlineAvatars(users);
+    _updateOnlineBanner(users);
+  }
+
+  function _renderOnlineBar(users) {
+    const bar = document.getElementById('online-users-bar');
+    if (!bar) return;
+    if (!users.length) {
+      bar.innerHTML = `<span class="infobar-val">—</span><span class="infobar-key">outros online</span>`;
+      return;
+    }
+    const avs = users.map(u =>
+      `<div style="width:22px;height:22px;border-radius:50%;background:${u.color};border:2px solid rgba(255,255,255,.4);display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:white;margin-right:-6px;">${_ini(u.name)}</div>`
+    ).join('');
+    bar.innerHTML = `<div style="display:flex;align-items:center;gap:4px;">${avs}</div><span class="infobar-key">${users.length} online${users.length>1?'s':''}</span>`;
+  }
+
+  function _renderOnlineAvatars(users) {
+    const el = document.getElementById('sync-label');
+    if (el) {
+      el.textContent = users.length ? `${users.length} online` : 'online';
+    }
+  }
+
+  function _updateOnlineBanner(users) {
+    const banner = document.getElementById('online-banner');
+    if (!banner) return;
+    if (!users || !users.length) { banner.style.display = 'none'; return; }
+    const names = users.map(u => u.name.split(' ')[0]).join(', ');
+    banner.style.display = 'flex';
+    banner.innerHTML = `<div class="pulse" style="width:8px;height:8px;border-radius:50%;background:#1a7a3e;animation:pls 1.8s ease infinite;flex-shrink:0;"></div>${names} já está operando`;
+  }
+
+  function _addFeedEntry(item) {
+    const feed = document.getElementById('live-feed');
+    const inner = document.getElementById('feed-inner');
+    if (!feed || !inner) return;
+    feed.style.display = 'block';
+    const entry = document.createElement('div');
+    entry.className = 'feed-entry';
+    const h = new Date(item.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    entry.innerHTML = `
+      <span class="feed-time" style="color:rgba(255,255,255,.4)">${h}</span>
+      <span class="feed-op" style="color:${item.opColor||'#E8611A'}">${item.operador.split(' ')[0]}</span>
+      <span>registrou</span>
+      <span class="feed-nf" style="color:white;font-weight:700">${item.nf}</span>
+      <span style="color:rgba(255,255,255,.5)">·</span>
+      <span>${item.cliente}</span>
+    `;
+    inner.insertBefore(entry, inner.firstChild);
+    while (inner.children.length > 4) inner.removeChild(inner.lastChild);
+  }
+
+  function _syncIndicator(status) {
+    const dot = document.getElementById('sync-dot');
+    const lbl = document.getElementById('sync-label');
+    if (!dot) return;
+    dot.className = 'sync-dot';
+    if (status === 'online')  { dot.classList.add(''); lbl && (lbl.textContent = 'online'); }
+    if (status === 'offline') { dot.classList.add('offline'); lbl && (lbl.textContent = 'offline'); }
+    if (status === 'syncing') { dot.classList.add('syncing'); lbl && (lbl.textContent = 'enviando...'); }
+  }
+
+  /* ── FORMULÁRIO ─────────────────────────────────────────── */
+  function onNF(val) {
+    _hideSugg('sg-nf');
+    _setHint('h-nf', '', '');
+    if (!val) return;
+    const items = DB.getItems();
+    const prev = items.find(i => i.nf === val.toUpperCase().trim());
+    if (prev) {
+      _setHint('h-nf', 'amber', 'Já registrado — campos preenchidos automaticamente');
+      _autoFill(prev);
+    } else {
+      const suggs = DB.getSuggestions('nf', val);
+      if (suggs.length) _showSugg('sg-nf', suggs, v => { document.getElementById('f-nf').value = v; _hideSugg('sg-nf'); onNF(v); });
+      _setHint('h-nf', 'blue', 'Novo registro · será cadastrado ao salvar');
+    }
+  }
+
+  function onNFKey(e) {
+    if (e.key === 'Enter') { e.target.blur(); }
+  }
+
+  function onSugg(field, val) {
+    const sgId = 'sg-' + field;
+    if (val.length > 0) {
+      const suggs = DB.getSuggestions(field, val);
+      if (suggs.length) {
+        _showSugg(sgId, suggs, v => { document.getElementById('f-' + field).value = v; _hideSugg(sgId); });
+      } else _hideSugg(sgId);
+    } else _hideSugg(sgId);
+  }
+
+  function _autoFill(prev) {
+    const map = { cli: 'cliente', vol: 'vol', end: 'end', obs: 'obs' };
+    Object.entries(map).forEach(([f, k]) => {
+      const el = document.getElementById('f-' + f);
+      if (prev[k] && el) { el.value = prev[k]; el.classList.add('filled-green'); }
+    });
+    if (prev.foto) {
+      _setHint('h-foto', 'blue', 'Foto registrada na base');
+      document.getElementById('photo-zone').classList.add('ok');
+      document.getElementById('photo-inner').innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;padding:12px;color:#1a7a3e;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span style="font-size:13px;font-weight:700;">Foto já registrada na base</span>
+        </div>`;
+    }
+  }
+
+  function onFoto(input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      fotoAtual = e.target.result;
+      document.getElementById('photo-zone').classList.add('ok');
+      document.getElementById('photo-inner').innerHTML = `
+        <img src="${fotoAtual}" class="photo-thumb">
+        <div style="padding:6px;text-align:center;font-size:12px;font-weight:700;color:#1a7a3e;">Foto adicionada ✓</div>`;
+      _setHint('h-foto', 'green', 'Foto capturada');
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  async function salvar() {
+    const nf  = document.getElementById('f-nf').value.trim().toUpperCase();
+    const cli = document.getElementById('f-cli').value.trim();
+    const vol = document.getElementById('f-vol').value.trim();
+
+    if (!nf || !cli || !vol) {
+      _showToast('Preencha NF/DI, Cliente e Vol/Qtd', 'warn');
+      const el = !nf ? 'f-nf' : !cli ? 'f-cli' : 'f-vol';
+      document.getElementById(el).focus();
+      return;
+    }
+
+    const btn = document.getElementById('btn-salvar');
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> Enviando...';
+
+    _syncIndicator('syncing');
+
+    const item = {
+      id:       Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+      nf, cliente: cli, vol,
+      end:      document.getElementById('f-end').value.trim(),
+      obs:      document.getElementById('f-obs').value.trim(),
+      foto:     fotoAtual,
+      operador: op, opColor,
+      ts:       Date.now()
+    };
+
+    const result = await DB.saveItem(item);
+
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Salvar e enviar <span class="btn-auto">· automático</span>';
+
+    if (result.success) {
+      const src = result.source === 'firebase' ? 'Enviado ✓' : 'Salvo localmente';
+      const queued = result.queued ? ' (na fila)' : '';
+      _showToast(src + queued, 'ok');
+      _syncIndicator('online');
+      _updateHoje();
+      limparForm();
+    } else {
+      _showToast('Erro ao salvar', 'err');
+      _syncIndicator('offline');
+    }
+  }
+
+  function limparForm() {
+    ['f-nf', 'f-cli', 'f-vol', 'f-end'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.value = ''; el.classList.remove('filled-green', 'filled-amber'); }
+    });
+    const obs = document.getElementById('f-obs');
+    if (obs) obs.value = '';
+    ['h-nf', 'h-foto'].forEach(id => _setHint(id, '', ''));
+    ['sg-nf', 'sg-cli', 'sg-vol', 'sg-end'].forEach(id => _hideSugg(id));
+    fotoAtual = null;
+    const zone = document.getElementById('photo-zone');
+    if (zone) {
+      zone.classList.remove('ok');
+      document.getElementById('photo-inner').innerHTML = `
+        <div class="photo-placeholder">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>Tirar foto ou selecionar da galeria</span>
+        </div>`;
+    }
+    const fi = document.getElementById('f-foto');
+    if (fi) fi.value = '';
+  }
+
+  /* ── SCANNER ─────────────────────────────────────────────── */
+  function openScanner() {
+    document.getElementById('modal-scanner').style.display = 'flex';
+    document.getElementById('scan-manual-inp').value = '';
+    _startCamera();
+  }
+
+  function closeScanner() {
+    _stopCamera();
+    document.getElementById('modal-scanner').style.display = 'none';
+  }
+
+  function confirmScan() {
+    const val = document.getElementById('scan-manual-inp').value.trim().toUpperCase();
+    if (val) {
+      document.getElementById('f-nf').value = val;
+      onNF(val);
+    }
+    closeScanner();
+  }
+
+  function _startCamera() {
+    try {
+      if (typeof ZXing === 'undefined') return;
+      const hints = new Map();
+      const formats = [
+        ZXing.BarcodeFormat.QR_CODE,
+        ZXing.BarcodeFormat.CODE_128,
+        ZXing.BarcodeFormat.CODE_39,
+        ZXing.BarcodeFormat.EAN_13,
+        ZXing.BarcodeFormat.EAN_8,
+        ZXing.BarcodeFormat.DATA_MATRIX
+      ];
+      hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
+      zxingReader = new ZXing.BrowserMultiFormatReader(hints);
+      zxingReader.decodeFromConstraints(
+        { video: { facingMode: 'environment' } },
+        'scanner-video',
+        (result, err) => {
+          if (result) {
+            const val = result.getText().toUpperCase();
+            document.getElementById('scan-manual-inp').value = val;
+            document.getElementById('f-nf').value = val;
+            onNF(val);
+            closeScanner();
+            _showToast('Código lido: ' + val, 'ok');
+          }
+        }
+      );
+    } catch (e) {
+      console.warn('[Scanner] ZXing indisponível:', e.message);
+    }
+  }
+
+  function _stopCamera() {
+    try {
+      if (zxingReader) { zxingReader.reset(); zxingReader = null; }
+    } catch(e) {}
+  }
+
+  /* ── TABS ────────────────────────────────────────────────── */
+  function navTab(tabName, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const pane = document.getElementById('pane-' + tabName);
+    if (pane) pane.classList.add('active');
+
+    if (tabName === 'lista')  renderLista();
+    if (tabName === 'dash')   renderDash();
+    if (tabName === 'config') renderConfig();
+  }
+
+  /* ── LISTA ───────────────────────────────────────────────── */
+  function renderLista() {
+    const q = (document.getElementById('search-inp')?.value || '').toLowerCase();
+    let items = DB.getItems();
+    const hoje = _toDay(Date.now());
+    const semana = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+    if (filtAtivo === 'hoje')   items = items.filter(i => _toDay(i.ts) === hoje);
+    if (filtAtivo === 'semana') items = items.filter(i => i.ts >= semana);
+    if (q) items = items.filter(i =>
+      (i.nf + i.cliente + (i.end || '') + (i.obs || '')).toLowerCase().includes(q)
+    );
+
+    const badge = document.getElementById('tab-badge-lista');
+    if (badge) badge.textContent = items.length;
+
+    const el = document.getElementById('lista-items');
+    if (!el) return;
+
+    if (!items.length) {
+      el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          Nenhum item encontrado.
+        </div>`;
+      return;
+    }
+
+    el.innerHTML = items.map(item => `
+      <div class="item-card">
+        <div class="ic-top">
+          <div>
+            <div class="ic-nf">${item.nf}</div>
+            <div class="ic-badges">
+              ${item.foto ? '<span class="badge blue">📷 foto</span>' : ''}
+              ${item.obs  ? '<span class="badge amber">obs</span>' : ''}
+            </div>
+          </div>
+          <div class="ic-right">
+            <div class="ic-time">${new Date(item.ts).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+            <div class="ic-op" style="color:${item.opColor || '#E8611A'}">${item.operador || ''}</div>
+            <button class="ic-del" onclick="App.deleteItem('${item.id}')">excluir</button>
+          </div>
+        </div>
+        <div class="ic-meta">${item.cliente} · ${item.vol}${item.end ? ' · ' + item.end : ''}</div>
+        ${item.obs ? `<div class="ic-obs">${item.obs}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function setFilt(el) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+    el.classList.add('on');
+    filtAtivo = el.dataset.f;
+    renderLista();
+  }
+
+  async function deleteItem(id) {
+    await DB.deleteItem(id);
+    renderLista();
+    _updateHoje();
+    _showToast('Item removido', 'warn');
+  }
+
+  /* ── DASHBOARD ───────────────────────────────────────────── */
+  function renderDash() {
+    const items  = DB.getItems();
+    const hoje   = _toDay(Date.now());
+    const semana = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const hjI    = items.filter(i => _toDay(i.ts) === hoje);
+    const swI    = items.filter(i => i.ts >= semana);
+    const clis   = new Set(items.map(i => i.cliente)).size;
+    const fotos  = items.filter(i => i.foto).length;
+    const fotoP  = items.length ? Math.round(fotos / items.length * 100) : 0;
+
+    const porOp = {};
+    items.forEach(i => {
+      if (!porOp[i.operador]) porOp[i.operador] = { cnt: 0, color: i.opColor || '#E8611A' };
+      porOp[i.operador].cnt++;
+    });
+    const maxOp = Math.max(...Object.values(porOp).map(v => v.cnt), 1);
+
+    const opRows = Object.entries(porOp)
+      .sort((a, b) => b[1].cnt - a[1].cnt)
+      .map(([name, v]) => `
+        <div class="op-row2">
+          <div class="op-av2" style="background:${v.color}20;color:${v.color};">${_ini(name)}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:#111;margin-bottom:4px;">${name}</div>
+            <div class="op-bar-bg2"><div class="op-bar-fill2" style="width:${Math.round(v.cnt/maxOp*100)}%;background:${v.color};"></div></div>
+          </div>
+          <span class="op-cnt">${v.cnt}</span>
+        </div>
+      `).join('');
+
+    document.getElementById('dash-content').innerHTML = `
+      <div class="dash-grid">
+        <div class="d-card highlight"><div class="dv">${hjI.length}</div><div class="dk">itens hoje</div></div>
+        <div class="d-card"><div class="dv">${swI.length}</div><div class="dk">esta semana</div></div>
+        <div class="d-card"><div class="dv">${items.length}</div><div class="dk">total geral</div></div>
+        <div class="d-card"><div class="dv">${clis}</div><div class="dk">clientes únicos</div></div>
+      </div>
+      <div class="sec-title">Cobertura de fotos <span style="font-size:12px;font-weight:400;color:#aaa;">${fotos}/${items.length} (${fotoP}%)</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${fotoP}%"></div></div>
+      <div class="sec-title">Produção por conferente</div>
+      <div class="ops-card">${opRows || '<div class="empty-state" style="padding:24px 0;">Sem registros ainda.</div>'}</div>
+    `;
+  }
+
+  /* ── CONFIG ──────────────────────────────────────────────── */
+  function renderConfig() {
+    const items  = DB.getItems();
+    const hoje   = _toDay(Date.now());
+    const hjCnt  = items.filter(i => _toDay(i.ts) === hoje).length;
+    const clis   = new Set(items.map(i => i.cliente)).size;
+
+    const av = document.getElementById('cfg-av');
+    if (av) { av.textContent = _ini(op||'??'); av.style.background = opColor; }
+    const opName = document.getElementById('cfg-op-name');
+    if (opName) opName.textContent = op || '—';
+
+    const stats = document.getElementById('cfg-stats');
+    if (stats) stats.innerHTML = `
+      <div class="cfg-stat"><div class="sv">${items.length}</div><div class="sk">itens totais</div></div>
+      <div class="cfg-stat orange"><div class="sv">${hjCnt}</div><div class="sk">itens hoje</div></div>
+      <div class="cfg-stat"><div class="sv">${clis}</div><div class="sk">clientes únicos</div></div>
+      <div class="cfg-stat"><div class="sv">${DB.isFirebaseConnected() ? '✓' : '✗'}</div><div class="sk">${DB.isFirebaseConnected() ? 'firebase ok' : 'offline'}</div></div>
+    `;
+  }
+
+  function trocarOp() {
+    op = null;
+    _setScreen('s-login');
+    document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('sel'));
+    document.getElementById('btn-iniciar').disabled = true;
+  }
+
+  function confirmarLimpar() {
+    const cnt = DB.getItems().length;
+    document.getElementById('mc-title').textContent = 'Apagar base de dados';
+    document.getElementById('mc-body').textContent = `Isso irá apagar todos os ${cnt} itens permanentemente, incluindo no Firebase. Esta ação não pode ser desfeita.`;
+    document.getElementById('mc-ok').onclick = async () => {
+      await DB.clearAll();
+      closeConf();
+      _showToast('Base apagada', 'warn');
+      renderConfig();
+    };
+    document.getElementById('modal-conf').style.display = 'flex';
+  }
+
+  function closeConf() {
+    document.getElementById('modal-conf').style.display = 'none';
+  }
+
+  /* ── EXPORTAÇÃO ──────────────────────────────────────────── */
+  function exportCSV() {
+    const items = DB.getItems();
+    const header = 'NF/DI,Cliente,Vol/Qtd,Endereço,Observação,Foto,Operador,Data,Hora\n';
+    const rows = items.map(i => [
+      i.nf, i.cliente, i.vol, i.end, i.obs,
+      i.foto ? 'Sim' : 'Não', i.operador,
+      _toDay(i.ts),
+      new Date(i.ts).toLocaleTimeString('pt-BR')
+    ].map(v => `"${(v || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    _download('inventario_portoex_' + _toDay(Date.now()) + '.csv', header + rows, 'text/csv');
+    _showToast('CSV exportado!', 'ok');
+  }
+
+  function exportTXT() {
+    const items = DB.getItems();
+    const header = `PORTOEX TRANSPORTADORA — INVENTÁRIO DE GALPÃO\nData: ${new Date().toLocaleDateString('pt-BR')} | Total: ${items.length} itens\n${'='.repeat(50)}\n\n`;
+    const lines = items.map((i, idx) => [
+      `=== Item ${idx + 1} ===`,
+      `NF/DI    : ${i.nf}`,
+      `Cliente  : ${i.cliente}`,
+      `Vol/Qtd  : ${i.vol}`,
+      `Endereço : ${i.end || '-'}`,
+      `Observ.  : ${i.obs || '-'}`,
+      `Foto     : ${i.foto ? 'Sim' : 'Não'}`,
+      `Operador : ${i.operador}`,
+      `Data/Hora: ${new Date(i.ts).toLocaleString('pt-BR')}`
+    ].join('\n')).join('\n\n');
+    _download('inventario_portoex_' + _toDay(Date.now()) + '.txt', header + lines, 'text/plain');
+    _showToast('TXT exportado!', 'ok');
+  }
+
+  function _download(name, content, type) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + content], { type }));
+    a.download = name;
+    a.click();
+  }
+
+  /* ── SUGESTÕES ────────────────────────────────────────────── */
+  function _showSugg(sgId, vals, cb) {
+    const el = document.getElementById(sgId);
+    if (!el) return;
+    el.innerHTML = vals.map((v, i) => `
+      <div class="sugg-item" data-idx="${i}">
+        <div class="sugg-ic">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#E8611A" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        ${v}
+      </div>
+    `).join('');
+    el.querySelectorAll('.sugg-item').forEach((item, i) => {
+      item.addEventListener('mousedown', e => { e.preventDefault(); cb(vals[i]); });
+      item.addEventListener('touchstart', e => { e.preventDefault(); cb(vals[i]); });
+    });
+    el.classList.add('open');
+  }
+
+  function _hideSugg(id) {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('open'); el.innerHTML = ''; }
+  }
+
+  /* ── HINT ─────────────────────────────────────────────────── */
+  function _setHint(id, cls, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = msg ? `<span class="hint-tag ${cls}">${msg}</span>` : '';
+  }
+
+  /* ── UTILS ────────────────────────────────────────────────── */
+  function _ini(name) {
+    return name.split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+
+  function _toDay(ts) {
+    return new Date(ts).toISOString().slice(0, 10);
+  }
+
+  function _setScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function _updateHoje() {
+    const items = DB.getItems();
+    const hoje = _toDay(Date.now());
+    const cnt = items.filter(i => _toDay(i.ts) === hoje).length;
+    const el = document.getElementById('info-hoje');
+    if (el) el.textContent = cnt;
+    const badge = document.getElementById('hdr-badge');
+    if (badge) badge.textContent = cnt;
+    const tabBadge = document.getElementById('tab-badge-lista');
+    if (tabBadge) tabBadge.textContent = cnt;
+  }
+
+  function _updateHora() {
+    const now = new Date();
+    const el = document.getElementById('info-hora');
+    if (el) el.textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const elD = document.getElementById('info-data');
+    if (elD) elD.textContent = now.toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
+  }
+
+  let _toastTimer = null;
+  function _showToast(msg, type = 'ok', dur = 2400) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  /* ── DISMISS SUGGS AO CLICAR FORA ────────────────────────── */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.sugg') && !e.target.closest('input') && !e.target.closest('textarea')) {
+      ['sg-nf', 'sg-cli', 'sg-vol', 'sg-end'].forEach(id => _hideSugg(id));
+    }
+  });
+
+  /* ── API PÚBLICA ─────────────────────────────────────────── */
+  return {
+    boot, iniciar,
+    onNF, onNFKey, onSugg, onFoto, salvar, limparForm,
+    openScanner, closeScanner, confirmScan,
+    navTab, renderLista, setFilt, deleteItem,
+    renderDash, renderConfig,
+    trocarOp, confirmarLimpar, closeConf,
+    exportCSV, exportTXT
+  };
+
+})();
+
+document.addEventListener('DOMContentLoaded', () => App.boot());
+
+  </script>
+
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('SW registrado'))
-        .catch(err => console.log('SW erro:', err));
+      navigator.serviceWorker.register('sw.js').catch(() => {});
     }
   </script>
 </body>
