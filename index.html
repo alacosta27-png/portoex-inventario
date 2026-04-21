@@ -9,7 +9,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="PORTOEX">
   <title>PORTOEX · Inventário</title>
-  <link rel="manifest" href="manifest.json">
   <style>
 /* ===== PORTOEX INVENTÁRIO v3.0 ===== */
 :root {
@@ -640,11 +639,29 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+
+select.inp {
+  width: 100%;
+  padding: 12px 36px 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;
+  -webkit-appearance: none;
+  appearance: none;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  transition: all .15s;
+}
+select.inp:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,97,26,.1); }
+select.inp option[value=""] { color: var(--text3); }
+
   </style>
 </head>
 <body>
 
-  <!-- ===================== TELA LOGIN ===================== -->
   <div id="s-login" class="screen active">
     <div class="login-bg"></div>
     <div class="login-content">
@@ -671,9 +688,8 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
     </div>
   </div>
 
-  <!-- ===================== TELA PRINCIPAL ===================== -->
   <div id="s-app" class="screen">
-    <header class="hdr" id="main-hdr">
+    <header class="hdr">
       <div class="hdr-brand">
         <div class="hdr-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
         <div>
@@ -682,7 +698,7 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
         </div>
       </div>
       <div class="hdr-right">
-        <div class="sync-indicator" id="sync-indicator">
+        <div class="sync-indicator">
           <span class="sync-dot" id="sync-dot"></span>
           <span id="sync-label">online</span>
         </div>
@@ -694,7 +710,7 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
       <div class="feed-inner" id="feed-inner"></div>
     </div>
 
-    <div class="tabs" id="tabs">
+    <div class="tabs">
       <button class="tab active" data-tab="form" onclick="App.navTab('form',this)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Registrar
@@ -733,6 +749,7 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
           </div>
         </div>
         <div class="form-body">
+
           <div class="field">
             <label class="lbl">NF / DI <span class="req">*</span></label>
             <div class="field-row">
@@ -752,6 +769,7 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
             </div>
             <div class="field-hint" id="h-nf"></div>
           </div>
+
           <div class="field">
             <label class="lbl">Cliente <span class="req">*</span></label>
             <div class="field-wrap">
@@ -760,6 +778,7 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
               <div class="sugg" id="sg-cli"></div>
             </div>
           </div>
+
           <div class="field">
             <label class="lbl">Vol / Qtd <span class="req">*</span></label>
             <div class="field-wrap">
@@ -768,18 +787,36 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
               <div class="sugg" id="sg-vol"></div>
             </div>
           </div>
+
           <div class="field">
-            <label class="lbl">Endereço / Destino</label>
-            <div class="field-wrap">
-              <input type="text" id="f-end" class="inp" placeholder="Cidade, UF ou cliente destino" autocomplete="off"
-                oninput="App.onSugg('end',this.value)">
-              <div class="sugg" id="sg-end"></div>
-            </div>
+            <label class="lbl">Endereço / Localização</label>
+            <select id="f-end" class="inp">
+              <option value="">Selecione o endereço...</option>
+          <option value="TRF - 01">TRF - 01</option>
+          <option value="TRF - 02">TRF - 02</option>
+          <option value="BALCÃO EXPED.">BALCÃO EXPED.</option>
+          <option value="BOX 10">BOX 10</option>
+          <option value="BOX 11">BOX 11</option>
+          <option value="BOX 12">BOX 12</option>
+          <option value="BOX 13">BOX 13</option>
+          <option value="BOX 14">BOX 14</option>
+          <option value="BOX 15">BOX 15</option>
+          <option value="BOX 16">BOX 16</option>
+          <option value="BOX 17">BOX 17</option>
+          <option value="BOX 18">BOX 18</option>
+          <option value="BOX 19">BOX 19</option>
+          <option value="BOX 20">BOX 20</option>
+          <option value="BOX 21">BOX 21</option>
+          <option value="JEM">JEM</option>
+          <option value="PENDÊNCIA">PENDÊNCIA</option>
+            </select>
           </div>
+
           <div class="field">
             <label class="lbl">Observação</label>
             <textarea id="f-obs" class="inp inp-ta" placeholder="Avarias, urgência, temperatura, DI pendente..."></textarea>
           </div>
+
           <div class="field">
             <label class="lbl">Foto da mercadoria</label>
             <div class="photo-zone" id="photo-zone" onclick="document.getElementById('f-foto').click()">
@@ -794,13 +831,14 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
             <div class="field-hint" id="h-foto"></div>
             <input type="file" id="f-foto" accept="image/*" capture="environment" style="display:none" onchange="App.onFoto(this)">
           </div>
+
           <div class="form-actions">
             <button class="btn-main btn-save" id="btn-salvar" onclick="App.salvar()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Salvar e enviar
               <span class="btn-auto">· automático</span>
             </button>
-            <button class="btn-ghost" onclick="App.limparForm()">Limpar</button>
+            <button class="btn-ghost" onclick="App.limparForm()">Limpar campos</button>
           </div>
         </div>
       </div>
@@ -869,7 +907,7 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-      <div id="scanner-video-wrap" class="scanner-video-wrap">
+      <div class="scanner-video-wrap">
         <video id="scanner-video" autoplay playsinline muted></video>
         <canvas id="scanner-canvas" style="display:none"></canvas>
         <div class="scanner-overlay">
@@ -906,11 +944,8 @@ html, body { height: 100%; font-family: 'Segoe UI', -apple-system, BlinkMacSyste
 
   <div id="toast" class="toast"></div>
 
-  <!-- Firebase SDK v8 (compat) via CDN -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-  <!-- ZXing barcode reader -->
   <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 
   <script>
@@ -925,7 +960,6 @@ const FIREBASE_CONFIG = {
   measurementId:     "G-R32BL40Q6P"
 };
   </script>
-
   <script>
 /**
  * ============================================================
@@ -1187,7 +1221,6 @@ const DB = (() => {
 })();
 
   </script>
-
   <script>
 /**
  * ============================================================
@@ -1439,14 +1472,20 @@ const App = (() => {
   }
 
   function limparForm() {
-    ['f-nf', 'f-cli', 'f-vol', 'f-end'].forEach(id => {
+    // Limpa campos de texto
+    ['f-nf', 'f-cli', 'f-vol'].forEach(id => {
       const el = document.getElementById(id);
       if (el) { el.value = ''; el.classList.remove('filled-green', 'filled-amber'); }
     });
+    // Reseta o select de endereço para opção vazia
+    const fend = document.getElementById('f-end');
+    if (fend) { fend.value = ''; fend.classList.remove('filled-green', 'filled-amber'); }
+    // Limpa observação
     const obs = document.getElementById('f-obs');
     if (obs) obs.value = '';
+    // Limpa hints e sugestões
     ['h-nf', 'h-foto'].forEach(id => _setHint(id, '', ''));
-    ['sg-nf', 'sg-cli', 'sg-vol', 'sg-end'].forEach(id => _hideSugg(id));
+    ['sg-nf', 'sg-cli', 'sg-vol'].forEach(id => _hideSugg(id));
     fotoAtual = null;
     const zone = document.getElementById('photo-zone');
     if (zone) {
@@ -1462,6 +1501,8 @@ const App = (() => {
     }
     const fi = document.getElementById('f-foto');
     if (fi) fi.value = '';
+    // Foca no campo NF para próxima leitura
+    setTimeout(() => { const nf = document.getElementById('f-nf'); if (nf) nf.focus(); }, 150);
   }
 
   /* ── SCANNER ─────────────────────────────────────────────── */
@@ -1828,10 +1869,9 @@ const App = (() => {
 document.addEventListener('DOMContentLoaded', () => App.boot());
 
   </script>
-
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
     }
   </script>
 </body>
