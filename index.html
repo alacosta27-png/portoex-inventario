@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1A3A6E">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PORTOEX">
+  <title>PORTOEX · Inventário</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <!-- ===================== TELA LOGIN ===================== -->
+  <div id="s-login" class="screen active">
+    <div class="login-bg"></div>
+    <div class="login-content">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">PORTOEX</div>
+          <div class="brand-tagline">TRANSPORTANDO SOLUÇÕES</div>
+        </div>
+      </div>
+      <div class="login-card">
+        <h2 class="login-title">Inventário de Galpão</h2>
+        <p class="login-sub">Selecione o conferente do turno da manhã</p>
+        <div id="online-banner" class="online-banner" style="display:none"></div>
+        <div class="op-grid" id="op-grid"></div>
+        <button class="btn-main" id="btn-iniciar" disabled onclick="App.iniciar()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          Iniciar conferência
+        </button>
+        <div class="login-footer">Sistema de coleta multi-dispositivo · Itajaí – SC</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TELA PRINCIPAL ===================== -->
+  <div id="s-app" class="screen">
+    <!-- HEADER -->
+    <header class="hdr" id="main-hdr">
+      <div class="hdr-brand">
+        <div class="hdr-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+        <div>
+          <div class="hdr-name">PORTOEX</div>
+          <div class="hdr-op" id="hdr-op-name"></div>
+        </div>
+      </div>
+      <div class="hdr-right">
+        <div class="sync-indicator" id="sync-indicator">
+          <span class="sync-dot" id="sync-dot"></span>
+          <span id="sync-label">online</span>
+        </div>
+        <div class="hdr-badge" id="hdr-badge">0</div>
+      </div>
+    </header>
+
+    <!-- LIVE FEED -->
+    <div class="live-feed" id="live-feed" style="display:none">
+      <div class="feed-inner" id="feed-inner"></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="form" onclick="App.navTab('form',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Registrar
+      </button>
+      <button class="tab" data-tab="lista" onclick="App.navTab('lista',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        Lista
+        <span class="tab-badge" id="tab-badge-lista">0</span>
+      </button>
+      <button class="tab" data-tab="dash" onclick="App.navTab('dash',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        Dashboard
+      </button>
+      <button class="tab" data-tab="config" onclick="App.navTab('config',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Config
+      </button>
+    </div>
+
+    <!-- CONTEÚDO DAS TABS -->
+    <div class="tab-content">
+
+      <!-- FORM -->
+      <div class="tab-pane active" id="pane-form">
+        <div class="infobar">
+          <div class="infobar-item">
+            <span class="infobar-val" id="info-hoje">0</span>
+            <span class="infobar-key">itens hoje</span>
+          </div>
+          <div class="infobar-sep"></div>
+          <div class="infobar-item">
+            <span class="infobar-val" id="info-data"></span>
+            <span class="infobar-key" id="info-hora"></span>
+          </div>
+          <div class="infobar-sep"></div>
+          <div class="infobar-item online-users" id="online-users-bar">
+            <span class="infobar-val">—</span>
+            <span class="infobar-key">outros online</span>
+          </div>
+        </div>
+
+        <div class="form-body">
+          <!-- NF/DI -->
+          <div class="field">
+            <label class="lbl">NF / DI <span class="req">*</span></label>
+            <div class="field-row">
+              <div class="field-wrap">
+                <input type="text" id="f-nf" class="inp inp-big" placeholder="Digite ou escaneie..." autocomplete="off"
+                  oninput="App.onNF(this.value)" onkeydown="App.onNFKey(event)">
+                <div class="sugg" id="sg-nf"></div>
+              </div>
+              <button class="scan-btn" onclick="App.openScanner()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <rect x="3" y="3" width="5" height="5" rx="1"/><rect x="16" y="3" width="5" height="5" rx="1"/>
+                  <rect x="3" y="16" width="5" height="5" rx="1"/>
+                  <path d="M16 16h5v5M16 21v-5h5M10 3h2M10 21h2M3 10v2M21 10v2"/>
+                </svg>
+                <span>Ler</span>
+              </button>
+            </div>
+            <div class="field-hint" id="h-nf"></div>
+          </div>
+
+          <!-- CLIENTE -->
+          <div class="field">
+            <label class="lbl">Cliente <span class="req">*</span></label>
+            <div class="field-wrap">
+              <input type="text" id="f-cli" class="inp" placeholder="Nome do cliente" autocomplete="off"
+                oninput="App.onSugg('cli',this.value)">
+              <div class="sugg" id="sg-cli"></div>
+            </div>
+          </div>
+
+          <!-- VOL/QTD -->
+          <div class="field">
+            <label class="lbl">Vol / Qtd <span class="req">*</span></label>
+            <div class="field-wrap">
+              <input type="text" id="f-vol" class="inp" placeholder="Ex: 3 caixas, 1 pallet, 2 sacos" autocomplete="off"
+                oninput="App.onSugg('vol',this.value)">
+              <div class="sugg" id="sg-vol"></div>
+            </div>
+          </div>
+
+          <!-- ENDEREÇO -->
+          <div class="field">
+            <label class="lbl">Endereço / Destino</label>
+            <div class="field-wrap">
+              <input type="text" id="f-end" class="inp" placeholder="Cidade, UF ou cliente destino" autocomplete="off"
+                oninput="App.onSugg('end',this.value)">
+              <div class="sugg" id="sg-end"></div>
+            </div>
+          </div>
+
+          <!-- OBS -->
+          <div class="field">
+            <label class="lbl">Observação</label>
+            <textarea id="f-obs" class="inp inp-ta" placeholder="Avarias, urgência, temperatura, DI pendente..."></textarea>
+          </div>
+
+          <!-- FOTO -->
+          <div class="field">
+            <label class="lbl">Foto da mercadoria</label>
+            <div class="photo-zone" id="photo-zone" onclick="document.getElementById('f-foto').click()">
+              <div id="photo-inner" class="photo-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span>Tirar foto ou selecionar da galeria</span>
+              </div>
+            </div>
+            <div class="field-hint" id="h-foto"></div>
+            <input type="file" id="f-foto" accept="image/*" capture="environment" style="display:none" onchange="App.onFoto(this)">
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-main btn-save" id="btn-salvar" onclick="App.salvar()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Salvar e enviar
+              <span class="btn-auto">· automático</span>
+            </button>
+            <button class="btn-ghost" onclick="App.limparForm()">Limpar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTA -->
+      <div class="tab-pane" id="pane-lista">
+        <div class="list-toolbar">
+          <div class="search-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none;"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" id="search-inp" class="inp search-inp" placeholder="Buscar NF, cliente..." oninput="App.renderLista()">
+          </div>
+          <div class="chips">
+            <button class="chip on" data-f="hoje" onclick="App.setFilt(this)">Hoje</button>
+            <button class="chip" data-f="semana" onclick="App.setFilt(this)">Semana</button>
+            <button class="chip" data-f="todos" onclick="App.setFilt(this)">Todos</button>
+          </div>
+        </div>
+        <div class="list-export">
+          <button class="btn-sm" onclick="App.exportCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSV
+          </button>
+          <button class="btn-sm" onclick="App.exportTXT()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            TXT
+          </button>
+        </div>
+        <div id="lista-items" class="lista-items"></div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="tab-pane" id="pane-dash">
+        <div id="dash-content"></div>
+      </div>
+
+      <!-- CONFIG -->
+      <div class="tab-pane" id="pane-config">
+        <div class="config-op-card" id="cfg-op-card">
+          <div class="cfg-av" id="cfg-av"></div>
+          <div>
+            <div class="cfg-op-name" id="cfg-op-name"></div>
+            <div class="cfg-op-role">Conferente ativo</div>
+          </div>
+        </div>
+        <div class="cfg-stats" id="cfg-stats"></div>
+        <div class="cfg-section-title">Exportar dados</div>
+        <button class="btn-main" style="margin-bottom:10px;" onclick="App.exportCSV()">Exportar CSV (Excel)</button>
+        <button class="btn-ghost" style="margin-bottom:18px;" onclick="App.exportTXT()">Exportar TXT (relatório)</button>
+        <div class="cfg-section-title">Sessão</div>
+        <button class="btn-ghost" style="margin-bottom:10px;" onclick="App.trocarOp()">Trocar operador</button>
+        <button class="btn-danger" onclick="App.confirmarLimpar()">Apagar toda a base</button>
+        <div class="cfg-info-box">
+          <div class="cfg-info-title">Sincronização em tempo real</div>
+          <p>Dados salvos no Firebase Realtime Database. Cada registro é enviado automaticamente e recebido por todos os dispositivos conectados ao mesmo tempo.</p>
+          <p style="margin-top:8px;">Para configurar seu banco de dados, edite o arquivo <code>js/firebase-config.js</code> com suas credenciais do Firebase.</p>
+        </div>
+        <div class="cfg-version">PORTOEX Inventário v3.0 · Itajaí – SC · 2025</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL SCANNER -->
+  <div class="modal-overlay" id="modal-scanner" style="display:none">
+    <div class="modal">
+      <div class="modal-hdr">
+        <h3>Leitor de código</h3>
+        <button class="modal-close" onclick="App.closeScanner()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="scanner-video-wrap" class="scanner-video-wrap">
+        <video id="scanner-video" autoplay playsinline muted></video>
+        <canvas id="scanner-canvas" style="display:none"></canvas>
+        <div class="scanner-overlay">
+          <div class="scanner-frame-box">
+            <div class="sc-corner sc-tl"></div><div class="sc-corner sc-tr"></div>
+            <div class="sc-corner sc-bl"></div><div class="sc-corner sc-br"></div>
+            <div class="sc-line"></div>
+          </div>
+          <p class="scanner-tip">Aponte para QR code ou código de barras</p>
+        </div>
+      </div>
+      <div class="scanner-manual">
+        <div class="scanner-divider"><span>ou insira manualmente</span></div>
+        <input type="text" id="scan-manual-inp" class="inp" placeholder="Digite o código..." style="text-transform:uppercase;font-weight:700;font-size:16px;letter-spacing:1px;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="App.closeScanner()">Cancelar</button>
+        <button class="btn-main" onclick="App.confirmScan()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAÇÃO -->
+  <div class="modal-overlay" id="modal-conf" style="display:none">
+    <div class="modal modal-sm">
+      <h3 id="mc-title" class="modal-title-danger"></h3>
+      <p id="mc-body" class="modal-body-text"></p>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="App.closeConf()">Cancelar</button>
+        <button class="btn-danger" id="mc-ok">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- SCRIPTS -->
+  <!-- ZXing para leitura de QR/barcode via câmera -->
+  <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('SW registrado'))
+        .catch(err => console.log('SW erro:', err));
+    }
+  </script>
+</body>
+</html>
