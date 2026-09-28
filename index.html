@@ -897,15 +897,16 @@ const DB = (() => {
 
   async function deleteItemsByDay(dayStr) {
     // dayStr = 'YYYY-MM-DD'
-    const toDay = ts => new Date(ts).toISOString().slice(0, 10);
+    const toDay = ts => { const d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
     const local = _getLocal();
     const toDelete = local.filter(i => toDay(i.ts) === dayStr);
     const remaining = local.filter(i => toDay(i.ts) !== dayStr);
     _saveLocal(remaining);
-    if (isFirebaseOk) {
-      for (const item of toDelete) {
-        try { await firebaseDb.ref('inventario/' + item.id).remove(); } catch (e) {}
-      }
+    if (isFirebaseOk && toDelete.length) {
+      const updates = {};
+      toDelete.forEach(item => { updates[item.id] = null; });
+      try { await firebaseDb.ref('inventario').update(updates); }
+      catch (e) { console.warn('[PORTOEX DB] Falha ao apagar no Firebase:', e.message); }
     }
     return toDelete.length;
   }
@@ -1399,7 +1400,7 @@ const App = (() => {
 
   function _renderDiasList() {
     const items = DB.getItems();
-    const toDay = ts => new Date(ts).toISOString().slice(0, 10);
+    const toDay = ts => { const d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
 
     // Agrupa por dia
     const byDay = {};
@@ -1481,7 +1482,7 @@ const App = (() => {
     } else {
       // Conta total de itens nos dias selecionados
       const items = DB.getItems();
-      const toDay = ts => new Date(ts).toISOString().slice(0, 10);
+      const toDay = ts => { const d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
       const totalItens = items.filter(i => _diasSelecionados.has(toDay(i.ts))).length;
       if (countEl) countEl.textContent = `${cnt} dia${cnt > 1 ? 's' : ''} selecionado${cnt > 1 ? 's' : ''} · ${totalItens} itens`;
       if (btn) btn.disabled = false;
@@ -1500,7 +1501,7 @@ const App = (() => {
   function _pedirSenhaDias() {
     if (_diasSelecionados.size === 0) return;
     const items = DB.getItems();
-    const toDay = ts => new Date(ts).toISOString().slice(0, 10);
+    const toDay = ts => { const d = new Date(ts); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); };
     const totalItens = items.filter(i => _diasSelecionados.has(toDay(i.ts))).length;
     const dias = _diasSelecionados.size;
     document.getElementById('dias-senha-desc').innerHTML =
@@ -1524,12 +1525,14 @@ const App = (() => {
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       return;
     }
+    // Copia os dias ANTES de fechar o modal (fecharDias() limpa a seleção)
+    const diasParaApagar = Array.from(_diasSelecionados);
     _fecharSenhaDias();
     fecharDias();
 
     // Apaga cada dia selecionado
     let totalApagado = 0;
-    for (const day of _diasSelecionados) {
+    for (const day of diasParaApagar) {
       const cnt = await DB.deleteItemsByDay(day);
       totalApagado += cnt;
     }
